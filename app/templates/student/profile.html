@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block page_heading %}
+My Profile
+{% endblock %}
+
+{% block content %}
+
+<form method="post" class="panel form-grid two">
+
+    <!-- CSRF PROTECTION -->
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}"
+    >
+
+
+    <!-- USERNAME -->
+    <label>
+        Username
+
+        <input
+            value="{{ current_user.username }}"
+            disabled
+        >
+    </label>
+
+
+    <!-- EMAIL -->
+    <label>
+        Email
+
+        <input
+            type="email"
+            name="email"
+            value="{{ current_user.email }}"
+            required
+        >
+    </label>
+
+
+    <!-- STUDENT ID -->
+    <label>
+        Student ID
+
+        <input
+            name="student_id"
+            value="{{ profile.student_id }}"
+            required
+        >
+    </label>
+
+
+    <!-- COURSE -->
+    <label>
+        Course
+
+        <input
+            name="course"
+            value="{{ profile.course }}"
+            required
+        >
+    </label>
+
+
+    <!-- FIRST NAME -->
+    <label>
+        First Name
+
+        <input
+            name="first_name"
+            value="{{ profile.first_name }}"
+            required
+        >
+    </label>
+
+
+    <!-- MIDDLE NAME -->
+    <label>
+        Middle Name
+
+        <input
+            name="middle_name"
+            value="{{ profile.middle_name or '' }}"
+        >
+    </label>
+
+
+    <!-- LAST NAME -->
+    <label>
+        Last Name
+
+        <input
+            name="last_name"
+            value="{{ profile.last_name }}"
+            required
+        >
+    </label>
+
+
+    <!-- YEAR LEVEL -->
+    <label>
+        Year Level
+
+        <input
+            name="year_level"
+            value="{{ profile.year_level }}"
+            required
+        >
+    </label>
+
+
+    <!-- CONTACT NUMBER -->
+    <label>
+        Contact Number
+
+        <input
+            name="contact_number"
+            value="{{ profile.contact_number or '' }}"
+        >
+    </label>
+
+
+    <!-- NEW PASSWORD -->
+    <label>
+        New Password
+
+        <input
+            type="password"
+            name="password"
+            minlength="8"
+            placeholder="Leave blank to keep current"
+        >
+    </label>
+
+
+    <!-- ADDRESS -->
+    <label class="full-span">
+        Address
+
+        <input
+            name="address"
+            value="{{ profile.address or '' }}"
+        >
+    </label>
+
+
+    <!-- ACTIONS -->
+    <div class="full-span form-actions">
+
+        <button
+            class="btn primary"
+            type="submit"
+        >
+            Save Profile
+        </button>
+
+    </div>
+
+</form>
+
+{% endblock %}

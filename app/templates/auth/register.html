@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+
+{% block title %}Register · ACC Care{% endblock %}
+
+{% block public_content %}
+
+<div class="auth-wrap register">
+
+    <div class="auth-card wide">
+
+        <!-- BRAND -->
+        <div class="brand auth-brand">
+
+            <div class="brand-icon">❤</div>
+
+            <div>
+                <strong>ACC Care</strong>
+                <small>Student Registration</small>
+            </div>
+
+        </div>
+
+        <h2>Create your student account</h2>
+
+        <p class="muted">
+            Use accurate information so your medical expert can identify your record.
+        </p>
+
+        <form method="post" class="form-grid two">
+
+            <!-- CSRF -->
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <!-- ACCOUNT INFORMATION -->
+
+            <label>
+                Username *
+                <input
+                    type="text"
+                    name="username"
+                    required
+                    autocomplete="username"
+                >
+            </label>
+
+            <label>
+                Email *
+                <input
+                    type="email"
+                    name="email"
+                    required
+                    autocomplete="email"
+                >
+            </label>
+
+            <label>
+                Password *
+                <input
+                    type="password"
+                    name="password"
+                    minlength="8"
+                    required
+                    autocomplete="new-password"
+                >
+            </label>
+
+            <label>
+                Confirm Password *
+                <input
+                    type="password"
+                    name="confirm_password"
+                    minlength="8"
+                    required
+                    autocomplete="new-password"
+                >
+            </label>
+
+            <!-- STUDENT INFORMATION -->
+
+            <label>
+                Student ID *
+                <input
+                    type="text"
+                    name="student_id"
+                    required
+                >
+            </label>
+
+            <label>
+                Course / Program *
+                <input
+                    type="text"
+                    name="course"
+                    required
+                >
+            </label>
+
+            <label>
+                First Name *
+                <input
+                    type="text"
+                    name="first_name"
+                    required
+                    autocomplete="given-name"
+                >
+            </label>
+
+            <label>
+                Middle Name
+                <input
+                    type="text"
+                    name="middle_name"
+                    autocomplete="additional-name"
+                >
+            </label>
+
+            <label>
+                Last Name *
+                <input
+                    type="text"
+                    name="last_name"
+                    required
+                    autocomplete="family-name"
+                >
+            </label>
+
+            <label>
+                Year Level *
+
+                <select name="year_level" required>
+                    <option value="">Select Year Level</option>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                    <option value="Graduate">Graduate</option>
+                </select>
+
+            </label>
+
+            <label>
+                Contact Number
+                <input
+                    type="tel"
+                    name="contact_number"
+                    autocomplete="tel"
+                >
+            </label>
+
+            <label>
+                Address
+                <input
+                    type="text"
+                    name="address"
+                    autocomplete="street-address"
+                >
+            </label>
+
+            <!-- SUBMIT -->
+
+            <div class="full-span">
+                <button
+                    class="btn primary full"
+                    type="submit"
+                >
+                    Create Student Account
+                </button>
+            </div>
+
+        </form>
+
+        <p class="auth-switch">
+            Already registered?
+            <a href="{{ url_for('auth.login') }}">
+                Back to login
+            </a>
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

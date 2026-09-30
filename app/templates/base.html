@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>
+        {% block title %}
+            ACC Consultation System
+        {% endblock %}
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <script
+        defer
+        src="{{ url_for('static', filename='js/app.js') }}"
+    ></script>
+
+</head>
+
+
+<body>
+
+{% if current_user.is_authenticated %}
+
+<div class="app-shell">
+
+
+    <!-- SIDEBAR -->
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                ❤
+            </div>
+
+            <div>
+                <strong>
+                    ACC Care
+                </strong>
+
+                <small>
+                    Consultation System
+                </small>
+            </div>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+        <nav class="nav">
+
+            {% if current_user.role == 'SUPER ADMIN' %}
+
+                <a href="{{ url_for('admin.dashboard') }}">
+                    🏠 Dashboard
+                </a>
+
+                <a href="{{ url_for('admin.users') }}">
+                    👥 Users
+                </a>
+
+                <a href="{{ url_for('admin.students') }}">
+                    🎓 Students
+                </a>
+
+                <a href="{{ url_for('admin.experts') }}">
+                    🩺 Medical Experts
+                </a>
+
+                <a href="{{ url_for('admin.consultations') }}">
+                    📋 Consultations
+                </a>
+
+                <a href="{{ url_for('admin.activity_logs') }}">
+                    🕘 Activity Logs
+                </a>
+
+                <a href="{{ url_for('admin.settings') }}">
+                    ⚙ Settings
+                </a>
+
+
+            {% elif current_user.role == 'MEDICAL EXPERT' %}
+
+                <a href="{{ url_for('medical.dashboard') }}">
+                    🏠 Dashboard
+                </a>
+
+                <a href="{{ url_for('medical.requests_list') }}">
+                    📥 Consultation Requests
+                </a>
+
+                <a href="{{ url_for('medical.consultations') }}">
+                    🩺 My Consultations
+                </a>
+
+                <a href="{{ url_for('medical.history') }}">
+                    🗂 Consultation History
+                </a>
+
+                <a href="{{ url_for('medical.profile') }}">
+                    👤 Profile
+                </a>
+
+
+            {% else %}
+
+                <a href="{{ url_for('student.dashboard') }}">
+                    🏠 Dashboard
+                </a>
+
+                <a href="{{ url_for('student.request_consultation') }}">
+                    ➕ Request Consultation
+                </a>
+
+                <a href="{{ url_for('student.consultations') }}">
+                    📋 My Consultations
+                </a>
+
+                <a href="{{ url_for('student.history') }}">
+                    🗂 Consultation History
+                </a>
+
+                <a href="{{ url_for('student.profile') }}">
+                    👤 Profile
+                </a>
+
+            {% endif %}
+
+        </nav>
+
+
+        <!-- SIDEBAR BOTTOM -->
+        <div class="sidebar-bottom">
+
+            <div class="mini-profile">
+
+                <div class="avatar">
+                    {{ current_user.display_name[:1]|upper }}
+                </div>
+
+                <div>
+
+                    <strong>
+                        {{ current_user.display_name }}
+                    </strong>
+
+                    <small>
+                        {{ current_user.role|title }}
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOGOUT -->
+            <form
+                method="post"
+                action="{{ url_for('auth.logout') }}"
+            >
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <button
+                    class="logout-btn"
+                    type="submit"
+                >
+                    ↪ Logout
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <button
+                class="menu-btn"
+                onclick="toggleSidebar()"
+                type="button"
+            >
+                ☰
+            </button>
+
+
+            <div>
+
+                <span class="eyebrow">
+                    {{ system_settings.get(
+                        'site_name',
+                        'ACC Consultation System'
+                    ) }}
+                </span>
+
+                <h1>
+                    {% block page_heading %}
+                        Welcome
+                    {% endblock %}
+                </h1>
+
+            </div>
+
+
+            <div class="top-user">
+
+                <span class="online-dot"></span>
+
+                {{ current_user.display_name }}
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+        <section class="content">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+
+                {% if messages %}
+
+                    <div class="flash-stack">
+
+                        {% for category, message in messages %}
+
+                            <div class="flash {{ category }}">
+
+                                {{ message }}
+
+                                <button
+                                    type="button"
+                                    onclick="this.parentElement.remove()"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            {% block content %}
+            {% endblock %}
+
+        </section>
+
+    </main>
+
+</div>
+
+
+{% else %}
+
+
+<!-- PUBLIC PAGE -->
+<div class="public-page">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            <div class="public-flashes">
+
+                {% for category, message in messages %}
+
+                    <div class="flash {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    {% block public_content %}
+    {% endblock %}
+
+</div>
+
+
+{% endif %}
+
+
+</body>
+
+</html>

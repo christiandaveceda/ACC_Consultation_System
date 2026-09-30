@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Consultation History{% endblock %}
+
+{% block page_heading %}
+Consultation History
+{% endblock %}
+
+{% block content %}
+
+<div class="panel">
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Expert</th>
+                    <th>Status</th>
+                    <th>Updated</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+
+            <tbody>
+
+                {% for c in consultations %}
+
+                <tr>
+
+                    <!-- TYPE -->
+                    <td>
+                        <strong>
+                            {{ c.consultation_type }}
+                        </strong>
+                    </td>
+
+
+                    <!-- MEDICAL EXPERT -->
+                    <td>
+
+                        {% if c.medical_expert %}
+                            {{ c.medical_expert.display_name }}
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- STATUS -->
+                    <td>
+
+                        <span
+                            class="status {{ c.status|lower|replace(' ', '-') }}"
+                        >
+                            {{ c.status }}
+                        </span>
+
+                    </td>
+
+
+                    <!-- UPDATED -->
+                    <td>
+
+                        {% if c.updated_at %}
+                            {{ c.updated_at.strftime('%b %d, %Y') }}
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- VIEW RESULT -->
+                    <td>
+
+                        <a
+                            class="btn small"
+                            href="{{ url_for(
+                                'student.consultation_detail',
+                                consultation_id=c.id
+                            ) }}"
+                        >
+                            View Result
+                        </a>
+
+                    </td>
+
+                </tr>
+
+
+                {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="empty"
+                    >
+                        No consultation history yet.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

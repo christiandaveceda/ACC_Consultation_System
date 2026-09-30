@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block title %}My Consultations{% endblock %}
+
+{% block page_heading %}
+My Consultations
+{% endblock %}
+
+{% block content %}
+
+<div class="toolbar">
+
+    <!-- SEARCH / FILTER -->
+    <form class="filters" method="get">
+
+        <input
+            type="text"
+            name="q"
+            value="{{ q }}"
+            placeholder="Search concern or type..."
+        >
+
+        <select name="status">
+            <option value="">All statuses</option>
+
+            {% for s in ['Pending', 'Accepted', 'In Progress', 'Completed', 'Cancelled', 'Rejected'] %}
+
+            <option
+                value="{{ s }}"
+                {% if status == s %}selected{% endif %}
+            >
+                {{ s }}
+            </option>
+
+            {% endfor %}
+        </select>
+
+        <button class="btn" type="submit">
+            Filter
+        </button>
+
+    </form>
+
+
+    <!-- NEW REQUEST -->
+    <a
+        class="btn primary"
+        href="{{ url_for('student.request_consultation') }}"
+    >
+        + New Request
+    </a>
+
+</div>
+
+
+<div class="panel">
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Expert</th>
+                    <th>Preferred</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+
+            <tbody>
+
+                {% for c in consultations %}
+
+                <tr>
+
+                    <!-- TYPE -->
+                    <td>
+
+                        <strong>
+                            {{ c.consultation_type }}
+                        </strong>
+
+                        <small>
+                            {{ c.concern[:75] }}
+
+                            {% if c.concern|length > 75 %}
+                                ...
+                            {% endif %}
+                        </small>
+
+                    </td>
+
+
+                    <!-- MEDICAL EXPERT -->
+                    <td>
+
+                        {% if c.medical_expert %}
+                            {{ c.medical_expert.display_name }}
+                        {% else %}
+                            Not assigned
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- PREFERRED DATE / TIME -->
+                    <td>
+
+                        {% if c.preferred_date %}
+                            {{ c.preferred_date.strftime('%b %d, %Y') }}
+                        {% endif %}
+
+                        {% if c.preferred_time %}
+                            <small>
+                                {{ c.preferred_time.strftime('%I:%M %p') }}
+                            </small>
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- STATUS -->
+                    <td>
+
+                        <span
+                            class="status {{ c.status|lower|replace(' ', '-') }}"
+                        >
+                            {{ c.status }}
+                        </span>
+
+                    </td>
+
+
+                    <!-- ACTIONS -->
+                    <td class="actions">
+
+                        <!-- VIEW -->
+                        <a
+                            class="btn small"
+                            href="{{ url_for(
+                                'student.consultation_detail',
+                                consultation_id=c.id
+                            ) }}"
+                        >
+                            View
+                        </a>
+
+
+                        <!-- CANCEL -->
+                        {% if c.status == 'Pending' %}
+
+                        <form
+                            method="post"
+                            action="{{ url_for(
+                                'student.cancel',
+                                consultation_id=c.id
+                            ) }}"
+                            onsubmit="return confirmAction('Cancel this consultation request?')"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                            >
+
+                            <button
+                                class="btn small danger"
+                                type="submit"
+                            >
+                                Cancel
+                            </button>
+
+                        </form>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+
+                <!-- NO CONSULTATIONS -->
+                {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="empty"
+                    >
+                        No consultations found.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

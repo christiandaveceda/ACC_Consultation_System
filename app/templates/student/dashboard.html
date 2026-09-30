@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block page_heading %}
+Hi, {{ current_user.display_name }}! 🌟
+{% endblock %}
+
+{% block content %}
+
+<div class="welcome-banner student">
+
+    <div>
+
+        <span class="pill blue">
+            Student care space
+        </span>
+
+        <h2>
+            Your wellbeing matters.
+        </h2>
+
+        <p>
+            Request a consultation, track your request,
+            and review expert recommendations.
+        </p>
+
+        <a
+            class="btn primary"
+            href="{{ url_for('student.request_consultation') }}"
+        >
+            + Request Consultation
+        </a>
+
+    </div>
+
+    <div class="banner-emoji">
+        💙
+    </div>
+
+</div>
+
+
+<!-- STATISTICS -->
+<div class="stat-grid four">
+
+    {% for key, label, icon, cls in [
+        ('total', 'Total Consultations', '📋', 'blue'),
+        ('pending', 'Pending Requests', '⏳', 'yellow'),
+        ('upcoming', 'Upcoming', '📅', 'orange'),
+        ('completed', 'Completed', '✓', 'green')
+    ] %}
+
+    <div class="stat-card {{ cls }}">
+
+        <div class="stat-icon">
+            {{ icon }}
+        </div>
+
+        <div>
+            <small>
+                {{ label }}
+            </small>
+
+            <strong>
+                {{ stats[key] }}
+            </strong>
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+
+<!-- RECENT CONSULTATIONS -->
+<div class="panel">
+
+    <div class="panel-head">
+
+        <h3>
+            Recent Consultations
+        </h3>
+
+        <a href="{{ url_for('student.consultations') }}">
+            View all
+        </a>
+
+    </div>
+
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Type</th>
+                    <th>Preferred</th>
+                    <th>Medical Expert</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for c in recent %}
+
+                <tr>
+
+                    <!-- TYPE -->
+                    <td>
+
+                        <strong>
+                            {{ c.consultation_type }}
+                        </strong>
+
+                        <small>
+                            {{ c.concern[:70] }}
+
+                            {% if c.concern|length > 70 %}
+                                …
+                            {% endif %}
+                        </small>
+
+                    </td>
+
+
+                    <!-- PREFERRED DATE / TIME -->
+                    <td>
+
+                        {% if c.preferred_date %}
+                            {{ c.preferred_date.strftime('%b %d, %Y') }}
+                        {% endif %}
+
+                        {% if c.preferred_time %}
+
+                        <small>
+                            {{ c.preferred_time.strftime('%I:%M %p') }}
+                        </small>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- MEDICAL EXPERT -->
+                    <td>
+
+                        {% if c.medical_expert %}
+                            {{ c.medical_expert.display_name }}
+                        {% else %}
+                            Not assigned
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- STATUS -->
+                    <td>
+
+                        <span
+                            class="status {{ c.status|lower|replace(' ', '-') }}"
+                        >
+                            {{ c.status }}
+                        </span>
+
+                    </td>
+
+
+                    <!-- VIEW -->
+                    <td>
+
+                        <a
+                            class="btn small"
+                            href="{{ url_for(
+                                'student.consultation_detail',
+                                consultation_id=c.id
+                            ) }}"
+                        >
+                            View
+                        </a>
+
+                    </td>
+
+                </tr>
+
+
+                {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="empty"
+                    >
+                        No consultations yet.
+                        Start by requesting one.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

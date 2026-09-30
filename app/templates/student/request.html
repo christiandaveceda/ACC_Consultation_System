@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block title %}Request Consultation{% endblock %}
+
+{% block page_heading %}
+Request a Consultation
+{% endblock %}
+
+{% block content %}
+
+<form
+    method="post"
+    class="panel form-grid two"
+>
+
+    <!-- CSRF PROTECTION -->
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}"
+    >
+
+
+    <!-- INFORMATION -->
+    <div class="info-box full-span">
+
+        <strong>
+            Before submitting your request
+        </strong>
+
+        <p>
+            Please describe your concern clearly and provide an accurate
+            preferred date and time.
+        </p>
+
+        <p>
+            This system supports consultation management. It does not provide
+            automated diagnosis or emergency treatment decisions.
+        </p>
+
+    </div>
+
+
+    <!-- CONSULTATION TYPE -->
+    <label>
+
+        Consultation Type*
+
+        <select
+            name="consultation_type"
+            required
+        >
+
+            <option value="">
+                Select type
+            </option>
+
+            <option value="General Wellness">
+                General Wellness
+            </option>
+
+            <option value="Physical Health">
+                Physical Health
+            </option>
+
+            <option value="Mental Wellbeing">
+                Mental Wellbeing
+            </option>
+
+            <option value="Nutrition">
+                Nutrition
+            </option>
+
+            <option value="First Aid / Minor Concern">
+                First Aid / Minor Concern
+            </option>
+
+            <option value="Other">
+                Other
+            </option>
+
+        </select>
+
+    </label>
+
+
+    <!-- MEDICAL EXPERT -->
+    <label>
+
+        Medical Expert
+
+        <select name="medical_expert_id">
+
+            <option value="">
+                Any available expert
+            </option>
+
+            {% for e in experts %}
+
+            <option value="{{ e.user.id }}">
+
+                {{ e.first_name }}
+                {{ e.last_name }}
+
+                {% if e.specialization %}
+                    · {{ e.specialization }}
+                {% endif %}
+
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </label>
+
+
+    <!-- PREFERRED DATE -->
+    <label>
+
+        Preferred Date*
+
+        <input
+            type="date"
+            name="preferred_date"
+            required
+        >
+
+    </label>
+
+
+    <!-- PREFERRED TIME -->
+    <label>
+
+        Preferred Time*
+
+        <input
+            type="time"
+            name="preferred_time"
+            required
+        >
+
+    </label>
+
+
+    <!-- CONCERN -->
+    <label class="full-span">
+
+        Concern / Description*
+
+        <textarea
+            name="concern"
+            rows="7"
+            minlength="10"
+            required
+            placeholder="Tell the medical expert what you would like to discuss."
+        ></textarea>
+
+    </label>
+
+
+    <!-- ACTIONS -->
+    <div class="full-span form-actions">
+
+        <a
+            class="btn"
+            href="{{ url_for('student.dashboard') }}"
+        >
+            Cancel
+        </a>
+
+        <button
+            class="btn primary"
+            type="submit"
+        >
+            Submit Request
+        </button>
+
+    </div>
+
+</form>
+
+{% endblock %}

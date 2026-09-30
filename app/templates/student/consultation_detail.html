@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block title %}Consultation #{{ consultation.id }}{% endblock %}
+
+{% block page_heading %}
+Consultation #{{ consultation.id }}
+{% endblock %}
+
+{% block content %}
+
+<div class="detail-grid">
+
+    <!-- MAIN DETAILS -->
+    <div class="panel">
+
+        <div class="detail-head">
+
+            <div>
+                <span class="status {{ consultation.status|lower|replace(' ', '-') }}">
+                    {{ consultation.status }}
+                </span>
+
+                <h2>
+                    {{ consultation.consultation_type }}
+                </h2>
+            </div>
+
+            <span class="muted">
+
+                {% if consultation.preferred_date %}
+                    {{ consultation.preferred_date.strftime('%B %d, %Y') }}
+                {% endif %}
+
+                {% if consultation.preferred_time %}
+                    · {{ consultation.preferred_time.strftime('%I:%M %p') }}
+                {% endif %}
+
+            </span>
+
+        </div>
+
+
+        <!-- CONCERN -->
+        <div class="detail-section">
+
+            <h3>Your Concern</h3>
+
+            <p class="concern">
+                {{ consultation.concern }}
+            </p>
+
+        </div>
+
+
+        <!-- MEDICAL EXPERT -->
+        <div class="detail-section">
+
+            <h3>Medical Expert</h3>
+
+            <p>
+
+                {% if consultation.medical_expert %}
+
+                    <strong>
+                        {{ consultation.medical_expert.display_name }}
+                    </strong>
+
+                    {% if consultation.medical_expert.medical_profile %}
+                        · {{ consultation.medical_expert.medical_profile.specialization }}
+                    {% endif %}
+
+                {% else %}
+
+                    Waiting for an expert to accept this request.
+
+                {% endif %}
+
+            </p>
+
+        </div>
+
+
+        <!-- NOTES -->
+        {% if consultation.notes %}
+
+        <div class="detail-section">
+
+            <h3>Expert Notes & Recommendations</h3>
+
+            {% for n in consultation.notes %}
+
+            <div class="note-card">
+
+                <small>
+                    {{ n.created_at.strftime('%B %d, %Y %I:%M %p') }}
+                </small>
+
+                <h4>Notes</h4>
+
+                <p>
+                    {{ n.notes }}
+                </p>
+
+
+                {% if n.recommendations %}
+
+                <div class="recommendation">
+
+                    <strong>
+                        Recommendations
+                    </strong>
+
+                    <p>
+                        {{ n.recommendations }}
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- REQUEST INFORMATION -->
+    <div class="panel">
+
+        <h3>Request Details</h3>
+
+        <div class="info-list">
+
+            <div>
+
+                <span>
+                    Request ID
+                </span>
+
+                <strong>
+                    #{{ consultation.id }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Created
+                </span>
+
+                <strong>
+
+                    {% if consultation.created_at %}
+                        {{ consultation.created_at.strftime('%b %d, %Y %I:%M %p') }}
+                    {% else %}
+                        —
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Updated
+                </span>
+
+                <strong>
+
+                    {% if consultation.updated_at %}
+                        {{ consultation.updated_at.strftime('%b %d, %Y %I:%M %p') }}
+                    {% else %}
+                        —
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- CANCEL REQUEST -->
+        {% if consultation.status == 'Pending' %}
+
+        <hr>
+
+        <form
+            method="post"
+            action="{{ url_for('student.cancel', consultation_id=consultation.id) }}"
+            onsubmit="return confirmAction('Cancel this consultation request?')"
+        >
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <button
+                class="btn danger full"
+                type="submit"
+            >
+                Cancel Request
+            </button>
+
+        </form>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
